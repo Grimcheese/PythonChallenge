@@ -36,13 +36,15 @@ def go_level_two(url):
 
     code = "g fmnc wms bgblr rpylqjyrc gr zw fylb. rfyrq ufyr amknsrcpq ypc dmp. bmgle gr gl zw fylb gq glcddgagclr ylb rfyr'q ufw rfgq rcvr gq qm jmle. sqgle qrpgle.kyicrpylq() gq pcamkkclbcb. lmu ynnjw ml rfc spj." 
 
-    code = code.upper()
-    for i in range(65, 90):
+    for i in range(122, 96, -1):
+        if i == 122 or i == 121:
+            i = i - 26
+
         old_character = chr(i)
         new_character = chr(i + 2)
+        print(f"old: {old_character}, new: {new_character}")
         code = code.replace(old_character, new_character)
 
-    code = code.lower()
     print(code)
 
     wait_input = input(wait_prompt)
