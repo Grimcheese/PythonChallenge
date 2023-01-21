@@ -29,6 +29,22 @@ def go_level_two(url):
     print("Getting level 2")
     driver.get(url)
 
+    r = requests.get(url)
+    print(r.text)
+
+    actual_url = f"{home_url}/pc/def/map.html"
+
+    code = "g fmnc wms bgblr rpylqjyrc gr zw fylb. rfyrq ufyr amknsrcpq ypc dmp. bmgle gr gl zw fylb gq glcddgagclr ylb rfyr'q ufw rfgq rcvr gq qm jmle. sqgle qrpgle.kyicrpylq() gq pcamkkclbcb. lmu ynnjw ml rfc spj." 
+
+    code = code.upper()
+    for i in range(65, 90):
+        old_character = chr(i)
+        new_character = chr(i + 2)
+        code = code.replace(old_character, new_character)
+
+    code = code.lower()
+    print(code)
+
     wait_input = input(wait_prompt)
 
 def run_main():
