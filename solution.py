@@ -1,6 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
+from bs4 import BeautifulSoup
+
 import requests
 
 home_url = "http://pythonchallenge.com"
@@ -69,6 +71,26 @@ def go_level_two(url):
 def go_level_three(url):
     print("Getting level 3")
     driver.get(url)
+
+    r = requests.get(url)
+    print(r.text)
+    soup = BeautifulSoup(r.text, 'html.parser')
+    comments = soup.find_all('comment')
+
+    # Count the number of times each character appears in a string
+    in_string = "hello"
+
+    char_count = {}
+
+    for character in in_string:
+        if character in char_count.keys():
+            char_count[character] += 1
+        else:
+            char_count[character] = 1 
+    
+    print("Characters found:")
+    for key in char_count.keys():
+        print(f"{key} : {char_count[key]}")
 
     wait_input = input(wait_prompt)
 
