@@ -1,7 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 
 import requests
 
@@ -73,12 +73,12 @@ def go_level_three(url):
     driver.get(url)
 
     r = requests.get(url)
-    print(r.text)
     soup = BeautifulSoup(r.text, 'html.parser')
-    comments = soup.find_all('comment')
-
+    
+    comment = soup.find_all(text=lambda text:isinstance(text, Comment))
+    
     # Count the number of times each character appears in a string
-    in_string = "hello"
+    in_string = comment[1]
 
     char_count = {}
 
