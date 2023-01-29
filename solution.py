@@ -118,11 +118,24 @@ def go_level_three(url):
     # Solution alg -
     # Find three upper case characters one lower case and then three uppercase.
 
-    pattern = re.compile("[a-z]+[A-Z]{3,3}[a-z]{1,1}[A-Z]{3,3}[a-z]+")
+    pattern = re.compile("[a-z]+[A-Z]{3,3}([a-z]{1,1})[A-Z]{3,3}[a-z]+")
     result = pattern.findall(comment)
 
-    print(result)
+    answer = "".join(result)
+    print(answer)
     
+    input(wait_prompt)
+
+    next_url = f"{challenge_url}{answer}.php"
+    return next_url
+
+
+def go_level_four(url):
+    """Go to and solve fourth level."""
+
+    print("Getting level four.")
+    driver.get(url)
+
     input(wait_prompt)
 
 def run_main():
@@ -130,6 +143,7 @@ def run_main():
     solution = go_level_one(solution)
     solution = go_level_two(solution)
     solution = go_level_three(solution)
+    solution = go_level_four(solution)
 
 if __name__  == "__main__":
     run_main()
