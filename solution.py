@@ -5,6 +5,9 @@ from bs4 import BeautifulSoup, Comment
 
 import requests
 
+import re
+
+
 home_url = "http://pythonchallenge.com"
 challenge_url = "http://pythonchallenge.com/pc/def/"
 level_one = "http://pythonchallenge.com/pc/def/0.html"
@@ -104,6 +107,22 @@ def go_level_three(url):
     print("Getting level 3")
     driver.get(url)
 
+    print("Solving level 3...")
+
+    # Get string from web page
+
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, 'html.parser')
+
+    comment = soup.find_all(text=lambda text:isinstance(text, Comment))[0]
+    # Solution alg -
+    # Find three upper case characters one lower case and then three uppercase.
+
+    pattern = re.compile("[a-z]+[A-Z]{3,3}[a-z]{1,1}[A-Z]{3,3}[a-z]+")
+    result = pattern.findall(comment)
+
+    print(result)
+    
     input(wait_prompt)
 
 def run_main():
