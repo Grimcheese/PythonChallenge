@@ -7,10 +7,13 @@ import requests
 
 import re
 
+import urllib
+from urllib import parse
+
 
 home_url = "http://pythonchallenge.com"
 challenge_url = "http://pythonchallenge.com/pc/def/"
-level_one = "http://pythonchallenge.com/pc/def/0.html"
+levels = ["http://pythonchallenge.com/pc/def/0.html"]
 
 wait_prompt = "Enter when ready to move to next page..."
 
@@ -21,7 +24,7 @@ def go_level_zero():
 
     print("Getting level zero.")
 
-    driver.get(level_one)
+    driver.get(levels[0])
 
     print("Solving problem one...")
     result = 2**38
@@ -130,11 +133,31 @@ def go_level_three(url):
     return next_url
 
 
+def get_next_nothing(in_url):
+    """Get the next set of nothing numbers from a given url."""
+
+    r = requests.get(in_url)
+
+    url_parts = urllib.parse.urlparse(in_url)
+    query = url_parts.query
+    
+    
 def go_level_four(url):
     """Go to and solve fourth level."""
 
     print("Getting level four.")
     driver.get(url)
+    
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, 'html.parser')
+    print(soup.prettify)
+    links = soup.find_all('a', href=True)
+    print(links[0]['href'])
+    
+    
+    # Start nothing linked-list
+    
+    # get_next_nothing(next_nothing_url)
 
     input(wait_prompt)
 
