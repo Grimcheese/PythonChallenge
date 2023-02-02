@@ -23,14 +23,17 @@ def go_level_zero():
     """Go to the first level (0) and get solution."""
 
     print("Getting level zero.")
-
     driver.get(levels[0])
 
-    print("Solving problem one...")
+    print("Solving level zero...")
     result = 2**38
-    next_level = f"{home_url}/pc/def/{result}.html"
+    next_level = f"{challenge_url}{result}.html"
 
+    print("Level zero solution found!")
     input(wait_prompt)
+    
+    write_solutions(0, next_level)
+    
     return next_level
 
 def level_one_decode(code):
@@ -51,13 +54,14 @@ def level_one_decode(code):
 
 def go_level_one(url):
     """Go to level 1 and work on solution."""
-    print("Getting level 1")
+    
+    print("Getting level one.")
     driver.get(url)
 
     r = requests.get(url)
     print(r.text)
 
-    print("Solving level 1")
+    print("Solving level one...")
     actual_url = f"{home_url}/pc/def/map.html"
 
 
@@ -66,12 +70,14 @@ def go_level_one(url):
     print(decoded)
 
     new_url_ext = level_one_decode("map")
-    print(new_url_ext)
+    print(f"Url ext: {new_url_ext}")
 
     next_url = f"{challenge_url}{new_url_ext}.html"
-    
+    print("Level one solution found!")
     input(wait_prompt)
 
+    write_solutions(1, next_url)
+    
     return next_url
 
 def go_level_two(url):
@@ -160,6 +166,41 @@ def go_level_four(url):
     # get_next_nothing(next_nothing_url)
 
     input(wait_prompt)
+    
+def write_solutions(level, solution):
+    """Write a solution url to file so it can be accessed later.
+    
+    Args:
+        level: An integer representing the level number to write to be written.
+        solution: A string with the solution url.
+    """
+    
+    
+    
+    level_string = f"Level {level}"
+    
+    fname = "found_solutions.txt"
+    
+    # Check if level solution already exists
+    exists = False
+    try:
+        with open(fname, 'r') as f:
+            file_lines = f.readlines()
+            for line in file_lines:
+                first, second = line.split(":", 1)
+                if first.strip() == level_string:
+                    exists = True
+    except FileNotFoundError:
+        print("File does not exist.")
+        
+    if not exists:
+        print(f"Writing level {level} solution to file...")
+        with open(fname, 'a') as f:
+            full_string = f"{level_string}:{solution}\n"
+            f.write(full_string)
+            
+            print("Added level to file!")
+        
 
 def run_main():
     solution = go_level_zero()
