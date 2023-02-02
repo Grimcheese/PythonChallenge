@@ -58,12 +58,7 @@ def go_level_one(url):
     print("Getting level one.")
     driver.get(url)
 
-    r = requests.get(url)
-    print(r.text)
-
     print("Solving level one...")
-    actual_url = f"{home_url}/pc/def/map.html"
-
 
     code = "g fmnc wms bgblr rpylqjyrc gr zw fylb. rfyrq ufyr amknsrcpq ypc dmp. bmgle gr gl zw fylb gq glcddgagclr ylb rfyr'q ufw rfgq rcvr gq qm jmle. sqgle qrpgle.kyicrpylq() gq pcamkkclbcb. lmu ynnjw ml rfc spj." 
     decoded = level_one_decode(code)
@@ -81,9 +76,13 @@ def go_level_one(url):
     return next_url
 
 def go_level_two(url):
-    print("Getting level 2")
+    """Go to level 2 and work on solution."""
+    
+    print("Getting level two")
     driver.get(url)
 
+    print("Solving level two...")
+    
     r = requests.get(url)
     soup = BeautifulSoup(r.text, 'html.parser')
     
@@ -105,18 +104,19 @@ def go_level_two(url):
         print(f"{key} : {char_count[key]}")
     print("Solution: equality")
     next_url =  f"{challenge_url}equality.html"
-
+    print("Level two solution found!")
     input(wait_prompt)
-
+    
+    write_solutions(2, next_url)
     return next_url
 
 def go_level_three(url):
-    """The third challenge to solve."""
+    """Go to level three and find the solution."""
 
-    print("Getting level 3")
+    print("Getting level three")
     driver.get(url)
 
-    print("Solving level 3...")
+    print("Solving level three...")
 
     # Get string from web page
 
@@ -131,11 +131,13 @@ def go_level_three(url):
     result = pattern.findall(comment)
 
     answer = "".join(result)
-    print(answer)
     
+    print("Level three solution found!")
     input(wait_prompt)
 
     next_url = f"{challenge_url}{answer}.php"
+    write_solutions(3, next_url)
+    
     return next_url
 
 
@@ -154,6 +156,8 @@ def go_level_four(url):
     print("Getting level four.")
     driver.get(url)
     
+    print("Solving level four...")
+    
     r = requests.get(url)
     soup = BeautifulSoup(r.text, 'html.parser')
     print(soup.prettify)
@@ -167,7 +171,7 @@ def go_level_four(url):
 
     input(wait_prompt)
     
-def write_solutions(level, solution):
+def write_solutions(level, solution, fname="found_solutions.txt"):
     """Write a solution url to file so it can be accessed later.
     
     Args:
@@ -175,11 +179,7 @@ def write_solutions(level, solution):
         solution: A string with the solution url.
     """
     
-    
-    
     level_string = f"Level {level}"
-    
-    fname = "found_solutions.txt"
     
     # Check if level solution already exists
     exists = False
@@ -201,13 +201,78 @@ def write_solutions(level, solution):
             
             print("Added level to file!")
         
+def read_solutions(fname="found_solutions.txt"):
+    """Read the file to find all stored solutions.
+    
+    Args: An optional argument specifying the file name to read.
+    
+    Returns: A dictionary containing levels and their urls
+    """
+    
+    solutions = {}
+    with open(fname, 'r') as f:
+        for line in f:
+            level, url = line.split(":", 1)
+            discard, level = level.split() 
+            solutions[level] = url.strip()
+    
+    print(solutions)
+    return solutions
+
+
+def choose_level(solutions):
+    """Let the user choose one of the solutions that have already been found.
+    
+    Args:
+        solutions: A dictionary containing the level and url of each previously
+            found solution.
+    Returns: The level that the user has chosen to start at.
+    """
+    
+    if len(solutions) == 0:
+        print("No solutions found starting at zero.")
+        return 0
+    
+    # Find lowest level
+    lowest = 0
+    
+    # Find highest level and display available levels to user
+    print("Available levels: ")
+    
+    highest = 0
+    for level in solutions.keys():
+        print(f"Level {level} at {solutions[level]}")
+        if int(level) > highest:
+            highest = int(level)
+    
+    chosen_level = -1
+    valid = False
+    while not valid:
+        try:
+            chosen_level = int(input("Please enter a level number: "))
+            if lowest <= chosen_level and chosen_level <= highest:
+                valid = True
+            else:
+                print(f"Number must be between {lowest} and {highest}")
+        except ValueError:
+            print("Not a valid number.")
+
+    print(f"Chose: {chosen_level}")
+    return chosen_level
+
 
 def run_main():
+    solutions = read_solutions()
+    
+    level = choose_level(solutions)
+    
     solution = go_level_zero()
     solution = go_level_one(solution)
     solution = go_level_two(solution)
     solution = go_level_three(solution)
     solution = go_level_four(solution)
+    
+    print("No more solutions.")
 
 if __name__  == "__main__":
     run_main()
