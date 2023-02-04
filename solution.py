@@ -13,7 +13,7 @@ from urllib import parse
 
 home_url = "http://pythonchallenge.com"
 challenge_url = "http://pythonchallenge.com/pc/def/"
-levels = ["http://pythonchallenge.com/pc/def/0.html"]
+levels = []
 
 wait_prompt = "Enter when ready to move to next page..."
 
@@ -22,8 +22,9 @@ driver = webdriver.Firefox()
 def go_level_zero():
     """Go to the first level (0) and get solution."""
 
+    url = levels[0]
     print("Getting level zero.")
-    driver.get(levels[0])
+    driver.get(url)
 
     print("Solving level zero...")
     result = 2**38
@@ -32,9 +33,10 @@ def go_level_zero():
     print("Level zero solution found!")
     input(wait_prompt)
     
-    write_solutions(0, next_level)
+    write_solutions(1, next_level)
     
-    return next_level
+    # Proceed to next level
+    go_level_one()
 
 def level_one_decode(code):
 
@@ -52,9 +54,10 @@ def level_one_decode(code):
 
     return decoded
 
-def go_level_one(url):
+def go_level_one():
     """Go to level 1 and work on solution."""
     
+    url = levels[1]
     print("Getting level one.")
     driver.get(url)
 
@@ -71,13 +74,14 @@ def go_level_one(url):
     print("Level one solution found!")
     input(wait_prompt)
 
-    write_solutions(1, next_url)
+    write_solutions(2, next_url)
     
-    return next_url
+    go_level_two()
 
-def go_level_two(url):
+def go_level_two():
     """Go to level 2 and work on solution."""
     
+    url = levels[2]
     print("Getting level two")
     driver.get(url)
 
@@ -107,13 +111,15 @@ def go_level_two(url):
     print("Level two solution found!")
     input(wait_prompt)
     
-    write_solutions(2, next_url)
-    return next_url
+    write_solutions(3, next_url)
+    
+    go_level_three()
 
-def go_level_three(url):
+def go_level_three():
     """Go to level three and find the solution."""
 
-    print("Getting level three")
+    url = levels[3]
+    print(f"Getting level three: {url}")
     driver.get(url)
 
     print("Solving level three...")
@@ -136,9 +142,9 @@ def go_level_three(url):
     input(wait_prompt)
 
     next_url = f"{challenge_url}{answer}.php"
-    write_solutions(3, next_url)
+    write_solutions(4, next_url)
     
-    return next_url
+    go_level_four()
 
 
 def get_next_nothing(in_url):
@@ -150,9 +156,10 @@ def get_next_nothing(in_url):
     query = url_parts.query
     
     
-def go_level_four(url):
+def go_level_four():
     """Go to and solve fourth level."""
 
+    url = levels[4]
     print("Getting level four.")
     driver.get(url)
     
@@ -198,6 +205,8 @@ def write_solutions(level, solution, fname="found_solutions.txt"):
         with open(fname, 'a') as f:
             full_string = f"{level_string}:{solution}\n"
             f.write(full_string)
+            levels.append(solution)
+            print(levels)
             
             print("Added level to file!")
         
@@ -261,16 +270,41 @@ def choose_level(solutions):
     return chosen_level
 
 
+def get_level_url(level_num):
+    """Return the URL of a level from the found_solutions.txt file."""
+    
+    with open("found_solutions.txt", 'r') as f:
+        content = f.readlines()
+        level_line = content[level_num]
+        
+        num, url = level_line.split(":", 1)
+    
+    return url.strip()
+        
+        
 def run_main():
+    write_solutions(0, "http://pythonchallenge.com/pc/def/0.html")
+    
+    # Store saved urls
     solutions = read_solutions()
+    for i in range(0, len(solutions)):
+        levels.append(solutions[str(i)])
     
-    level = choose_level(solutions)
-    
-    solution = go_level_zero()
-    solution = go_level_one(solution)
-    solution = go_level_two(solution)
-    solution = go_level_three(solution)
-    solution = go_level_four(solution)
+    if len(levels) > 1:
+        level = choose_level(solutions)
+    else:
+        level = 0
+        
+    if level == 0:
+        go_level_zero()
+    elif level == 1:
+        go_level_one()
+    elif level == 2:
+        go_level_two()
+    elif level == 3:
+        go_level_three()
+    elif level == 4:
+        go_level_four()
     
     print("No more solutions.")
 
