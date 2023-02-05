@@ -138,6 +138,7 @@ def go_level_three():
 
     answer = "".join(result)
     
+    print(answer)
     print("Level three solution found!")
     input(wait_prompt)
 
@@ -147,13 +148,22 @@ def go_level_three():
     go_level_four()
 
 
-def get_next_nothing(in_url):
-    """Get the next set of nothing numbers from a given url."""
+def get_next_nothing(nothing):
+    """Get the next set of nothing numbers from a given nothing."""
 
-    r = requests.get(in_url)
-
-    url_parts = urllib.parse.urlparse(in_url)
-    query = url_parts.query
+    nothing_url = f"{levels[4]}?nothing={nothing}"
+    print(nothing_url)
+    r = requests.get(nothing_url)
+    
+    print(r.text)
+    
+    words = r.text.split(" ")
+    next_num = words[-1]
+    print(f"Next num: {next_num}")
+    #url_parts = urllib.parse.urlparse(in_url)
+    #query = url_parts.query
+    
+    return next_num
     
     
 def go_level_four():
@@ -171,10 +181,17 @@ def go_level_four():
     links = soup.find_all('a', href=True)
     print(links[0]['href'])
     
+    nothings = []
+    path, nothing = links[0]['href'].split("=")
     
+    nothings.append(nothing)
     # Start nothing linked-list
     
     # get_next_nothing(next_nothing_url)
+    for i in range(0, 400):
+        nothings.append(get_next_nothing(nothings[i]))
+        
+    print(nothings)
 
     input(wait_prompt)
     
