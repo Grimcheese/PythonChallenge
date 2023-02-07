@@ -148,22 +148,27 @@ def go_level_three():
     go_level_four()
 
 
-def get_next_nothing(nothing):
+def get_next_nothing(nothing, nothings, page_contents):
     """Get the next set of nothing numbers from a given nothing."""
 
     nothing_url = f"{levels[4]}?nothing={nothing}"
-    print(nothing_url)
+
     r = requests.get(nothing_url)
     
-    print(r.text)
-    
+
+    pattern = re.compile("and the next nothing is \d+")
+    m = re.match(pattern, r.text)
+    if m is None:
+        page_contents.append(r.text)
+        print(r.text)
+
     words = r.text.split(" ")
     next_num = words[-1]
     print(f"Next num: {next_num}")
     #url_parts = urllib.parse.urlparse(in_url)
     #query = url_parts.query
     
-    return next_num
+    nothings.append(next_num)
     
     
 def go_level_four():
@@ -181,6 +186,7 @@ def go_level_four():
     links = soup.find_all('a', href=True)
     print(links[0]['href'])
     
+    page_contents = []
     nothings = []
     path, nothing = links[0]['href'].split("=")
     
@@ -189,11 +195,32 @@ def go_level_four():
     
     # get_next_nothing(next_nothing_url)
     for i in range(0, 400):
-        nothings.append(get_next_nothing(nothings[i]))
-        
-    print(nothings)
+        get_next_nothing(nothings[i], nothings, page_contents)
+        pattern = re.compile("\w+.html")
+        if len(page_contents) > 0:
+            m = re.match(pattern, page_contents[-1])
+            if m is not None:
+                break
+    print(page_contents[-1])
+
+    next_url = f"{challenge_url}{page_contents[-1]}"
+    write_solutions(5, next_url)
 
     input(wait_prompt)
+    go_level_five()
+
+
+def go_level_five():
+    """Go to and solve the fifth level."""
+
+    url = levels[5]
+    print("Getting level 5")
+    driver.get(url)
+
+
+
+    input(wait_prompt)
+
     
 def write_solutions(level, solution, fname="found_solutions.txt"):
     """Write a solution url to file so it can be accessed later.
