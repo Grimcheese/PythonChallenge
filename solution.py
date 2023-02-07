@@ -217,7 +217,11 @@ def go_level_five():
     print("Getting level 5")
     driver.get(url)
 
+    # Get banner page with problem text
+    banner_url = f"{challenge_url}banner.p"
+    banner = requests.get(banner_url)
 
+    print(banner.text)
 
     input(wait_prompt)
 
@@ -349,6 +353,8 @@ def run_main():
         go_level_three()
     elif level == 4:
         go_level_four()
+    elif level == 5:
+        go_level_five()
     
     print("No more solutions.")
 
