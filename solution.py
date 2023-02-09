@@ -3,14 +3,11 @@ from selenium.webdriver.common.keys import Keys
 
 from bs4 import BeautifulSoup, Comment
 
-import requests
+import requests, re, pickle, zipfile
 
-import re
-
-import urllib
 from urllib import parse
 
-import pickle
+from io import BytesIO
 
 
 home_url = "http://pythonchallenge.com"
@@ -244,12 +241,50 @@ def go_level_five():
     go_level_six()
 
 
+def get_level_six_nothing(archive, filename):
+    """Search the specified file in archive for a number (the next nothing)."""
+
+    words = []
+    with archive.open(filename) as zip_file:
+        for line in zip_file:
+            line = line.decode()
+            print(line)
+            words.extend(line.split(" "))
+    
+    next_nothing = None
+    for word in words:
+        word = word.strip()
+
+        if word.isdigit():
+            next_nothing = word
+    
+    return next_nothing
+
+
 def go_level_six():
     '''Go to and solve level 6.'''
 
     print("Getting level 6")
     url = levels[6]
     driver.get(url)
+
+    print("Getting file at /channel.zip...")
+    r = requests.get(f"{challenge_url}/channel.zip")
+    r_bytes = BytesIO(r.content)
+    r_zip = zipfile.ZipFile(r_bytes)
+
+    file_names = r_zip.namelist()
+    print(file_names)
+
+    # Get inital file index from the readme
+    num = get_level_six_nothing(r_zip, "readme.txt")
+    print(f"First file name: {num}.txt")
+
+    print("Begin searching through archive")
+    while num.isdigit():
+        num = get_level_six_nothing(r_zip, f"{num}.txt")
+    
+    
 
     input(wait_prompt)
     
