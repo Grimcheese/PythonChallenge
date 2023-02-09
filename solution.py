@@ -241,16 +241,17 @@ def go_level_five():
     go_level_six()
 
 
-def get_level_six_nothing(archive, filename):
+def get_level_six_nothing(archive, filename, found_comments):
     """Search the specified file in archive for a number (the next nothing)."""
 
     words = []
     with archive.open(filename) as zip_file:
         for line in zip_file:
-            line = line.decode()
             print(line)
+            line = line.decode()
             words.extend(line.split(" "))
     
+    found_comments.append(archive.getinfo(filename).comment.decode())
     next_nothing = None
     for word in words:
         word = word.strip()
@@ -264,7 +265,7 @@ def get_level_six_nothing(archive, filename):
 def go_level_six():
     '''Go to and solve level 6.'''
 
-    print("Getting level 6")
+    print("Getting level six")
     url = levels[6]
     driver.get(url)
 
@@ -273,21 +274,39 @@ def go_level_six():
     r_bytes = BytesIO(r.content)
     r_zip = zipfile.ZipFile(r_bytes)
 
-    file_names = r_zip.namelist()
-    print(file_names)
+    comments = []
 
     # Get inital file index from the readme
-    num = get_level_six_nothing(r_zip, "readme.txt")
+    num = get_level_six_nothing(r_zip, "readme.txt", comments)
     print(f"First file name: {num}.txt")
 
     print("Begin searching through archive")
-    while num.isdigit():
-        num = get_level_six_nothing(r_zip, f"{num}.txt")
-    
-    
+    while not (num == None):
+        num = get_level_six_nothing(r_zip, f"{num}.txt", comments) 
+
+    print("".join(comments))
+    # Prints out HOCKEY in ascii art
+
+    next_url = f"{challenge_url}hockey.html"
+    write_solutions(7, next_url)
 
     input(wait_prompt)
-    
+
+    go_level_seven()
+
+
+def go_level_seven():
+    """Go to and solve level 7 of Python Challenge."""
+
+    print("Getting level seven")
+
+    url = levels[7]
+    driver.get(url)
+
+    print("Solving level seven...")
+
+
+    input(wait_prompt)
 
 def write_solutions(level, solution, fname="found_solutions.txt"):
     """Write a solution url to file so it can be accessed later.
