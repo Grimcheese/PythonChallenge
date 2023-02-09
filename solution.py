@@ -219,26 +219,41 @@ def go_level_five():
     print("Getting level 5")
     driver.get(url)
 
+    print("Solving level 5...")
     # Get banner page with problem text
     banner_url = f"{challenge_url}banner.p"
     banner = requests.get(banner_url)
 
+    # Unpickle the data in banner.p
     unpickled = pickle.loads(banner.content)
     print(unpickled)
     print(len(unpickled))
     
+    # Uncompress character data and print to screen
     for line in unpickled:
         line_str = ""
         for element in line:
             line_str = f"{line_str}{element[0] * element[1]}"
         print(line_str)
 
-    #for line in banner.split("\n"):
-
+    # Produces channel image - next url is channel
+    next_url = f"{challenge_url}channel.html"
+    write_solutions(6, next_url)
 
     input(wait_prompt)
+    go_level_six()
 
+
+def go_level_six():
+    '''Go to and solve level 6.'''
+
+    print("Getting level 6")
+    url = levels[6]
+    driver.get(url)
+
+    input(wait_prompt)
     
+
 def write_solutions(level, solution, fname="found_solutions.txt"):
     """Write a solution url to file so it can be accessed later.
     
@@ -368,6 +383,8 @@ def run_main():
         go_level_four()
     elif level == 5:
         go_level_five()
+    elif level == 6:
+        go_level_six()
     
     print("No more solutions.")
 
