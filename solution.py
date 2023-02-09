@@ -10,6 +10,8 @@ import re
 import urllib
 from urllib import parse
 
+import pickle
+
 
 home_url = "http://pythonchallenge.com"
 challenge_url = "http://pythonchallenge.com/pc/def/"
@@ -221,7 +223,18 @@ def go_level_five():
     banner_url = f"{challenge_url}banner.p"
     banner = requests.get(banner_url)
 
-    print(banner.text)
+    unpickled = pickle.loads(banner.content)
+    print(unpickled)
+    print(len(unpickled))
+    
+    for line in unpickled:
+        line_str = ""
+        for element in line:
+            line_str = f"{line_str}{element[0] * element[1]}"
+        print(line_str)
+
+    #for line in banner.split("\n"):
+
 
     input(wait_prompt)
 
